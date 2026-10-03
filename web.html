@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0e12" />
+  <title>Dropzone — Matchday Ledger</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b0e12;--surface:#11161c;--surface2:#151c24;--surface3:#1b242e;--line:rgba(225,235,241,.09);--line2:rgba(225,235,241,.15);--text:#f2f5f3;--muted:#8d99a4;--quiet:#63707b;--lime:#d1f36a;--limeSoft:rgba(209,243,106,.12);--blue:#7aa8ff;--violet:#b9a2ff;--orange:#ffb86a;--red:#ff8181;--radius:17px;--shadow:0 18px 60px rgba(0,0,0,.22)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:94px}body{margin:0;background:radial-gradient(ellipse at 78% -10%,rgba(102,128,71,.1),transparent 34%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{color:inherit}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--lime);outline-offset:2px}.app-shell{min-height:100vh;display:grid;grid-template-columns:246px minmax(0,1fr)}
+    .sidebar{position:sticky;top:0;height:100vh;padding:26px 16px 18px;display:flex;flex-direction:column;background:#0f1318;border-right:1px solid var(--line);z-index:10}.brand{display:flex;gap:12px;align-items:center;padding:0 10px 30px}.brand-mark{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:#10150b;background:var(--lime);box-shadow:0 0 28px rgba(209,243,106,.16)}.brand-name{font-size:14px;letter-spacing:.16em;font-weight:850;line-height:1.1}.brand-sub{color:var(--muted);font-size:9px;letter-spacing:.18em;margin-top:5px;font-weight:700}.nav-label{color:#58636d;font-size:9px;letter-spacing:.17em;font-weight:800;padding:0 12px 10px}.nav-list{display:grid;gap:5px}.nav-link{width:100%;display:flex;align-items:center;gap:12px;border:0;background:transparent;color:#9aa5ae;text-align:left;padding:11px 12px;border-radius:11px;cursor:pointer;transition:background .18s ease,color .18s ease;font-size:12px;font-weight:650}.nav-link:hover{background:rgba(255,255,255,.045);color:var(--text)}.nav-link.active{background:var(--limeSoft);color:var(--lime)}.nav-link svg{flex:none;width:17px;height:17px}.sidebar-spacer{flex:1}.workspace-card{margin:12px 3px 0;padding:13px;border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:13px}.workspace-title{font-size:10px;font-weight:750;letter-spacing:.08em}.workspace-sub{display:flex;gap:7px;align-items:center;font-size:10px;color:var(--muted);margin-top:8px}.live-dot{width:6px;height:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px var(--lime)}.side-note{color:#69747e;font-size:10px;padding:15px 10px 0}
+    .main{min-width:0}.topbar{height:70px;padding:0 30px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);background:rgba(11,14,18,.83);backdrop-filter:blur(18px);position:sticky;top:0;z-index:8}.crumbs{display:flex;gap:10px;align-items:center;color:var(--quiet);text-transform:uppercase;letter-spacing:.13em;font-size:9px;font-weight:800;white-space:nowrap}.crumbs b{color:#bbc4ca;font-weight:800}.top-actions{display:flex;align-items:center;gap:8px}.save-state{display:inline-flex;gap:7px;align-items:center;color:#84918b;font-size:10px;margin-right:4px;white-space:nowrap}.save-state svg{width:14px;height:14px;color:var(--lime)}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:37px;padding:0 12px;border-radius:10px;border:1px solid var(--line2);background:#151a20;color:#cdd4d8;font-weight:700;font-size:10px;cursor:pointer;transition:.16s ease;white-space:nowrap;text-decoration:none}.btn:hover{background:#202832;border-color:rgba(225,235,241,.24);color:#fff}.btn svg{width:15px;height:15px}.btn-primary{background:var(--lime);border-color:var(--lime);color:#151a0b;font-weight:850}.btn-primary:hover{background:#e0ff84;border-color:#e0ff84;color:#151a0b;transform:translateY(-1px)}.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}.btn-outline-lime{border-color:rgba(209,243,106,.25);color:var(--lime);background:rgba(209,243,106,.06)}.mode-strip{display:flex;align-items:center;gap:9px;padding:8px 30px;border-bottom:1px solid var(--line);color:#91a095;font-size:9px;background:rgba(17,22,28,.72)}.mode-pill{border:1px solid rgba(209,243,106,.2);border-radius:99px;padding:3px 8px;color:var(--lime);font-size:8px;font-weight:850;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}.mode-strip.viewer .mode-pill{border-color:rgba(122,168,255,.23);color:#9bbdff}.mode-strip.error .mode-pill{border-color:rgba(255,129,129,.25);color:#ffa0a0}
+    .content{max-width:1590px;margin:0 auto;padding:25px 30px 64px}.hero{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:28px;min-height:188px;padding:29px 33px;border:1px solid rgba(216,241,147,.16);border-radius:21px;background:linear-gradient(115deg,#1a2426 0%,#151d20 48%,#172019 100%);box-shadow:var(--shadow)}.hero:before{content:"";position:absolute;width:390px;height:390px;right:130px;top:-215px;border-radius:50%;border:1px solid rgba(209,243,106,.12);box-shadow:0 0 0 34px rgba(209,243,106,.025),0 0 0 68px rgba(209,243,106,.02);pointer-events:none}.hero-copy,.hero-right{position:relative;z-index:1}.eyebrow{color:var(--lime);font-size:9px;letter-spacing:.19em;font-weight:850;text-transform:uppercase;display:inline-flex;align-items:center;gap:8px}.eyebrow:before{content:"";width:16px;height:1px;background:var(--lime)}h1{font-size:clamp(30px,3.2vw,45px);line-height:1.02;letter-spacing:-.055em;margin:13px 0 10px;font-weight:780}h1 span{color:var(--lime)}.hero-copy p{color:#9ca9a9;font-size:12px;max-width:510px;margin:0}.hero-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:20px}.hero-tag{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(234,245,214,.12);background:rgba(10,15,14,.22);border-radius:99px;color:#c0cbc3;padding:6px 10px;font-size:9px;font-weight:720;letter-spacing:.04em}.hero-tag svg{width:12px;height:12px;color:var(--lime)}.hero-right{min-width:180px;padding:17px 18px;border-radius:14px;background:rgba(8,12,12,.28);border:1px solid rgba(234,245,214,.09)}.hero-right-label{color:#7e8a87;font-size:8px;font-weight:850;letter-spacing:.18em}.hero-lobby{color:var(--lime);font-size:24px;font-weight:850;letter-spacing:-.04em;margin-top:4px}.hero-right-detail{margin-top:7px;color:#b7c0b9;font-size:10px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:15px 0 40px}.metric-card{position:relative;min-height:126px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(145deg,#141a21,#10151b);border-radius:15px;padding:16px 17px 14px}.metric-card:after{content:"";position:absolute;width:86px;height:86px;right:-33px;bottom:-42px;border-radius:50%;border:1px solid rgba(209,243,106,.1);box-shadow:0 0 0 15px rgba(209,243,106,.025);pointer-events:none}.metric-head{display:flex;justify-content:space-between;gap:10px;align-items:center;color:#9aa5ad;font-size:9px;letter-spacing:.12em;font-weight:800;text-transform:uppercase}.metric-icon{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:rgba(255,255,255,.045);color:var(--lime)}.metric-icon svg{width:14px;height:14px}.metric-value{display:flex;align-items:baseline;gap:5px;margin-top:11px;position:relative;z-index:1}.metric-value strong,.metric-value input{color:#f1f5f1;font-size:27px;line-height:1;letter-spacing:-.06em;font-weight:800}.metric-value input{width:90px;max-width:60%;border:0;border-bottom:1px solid transparent;background:transparent;padding:0;outline:none}.metric-value input:focus{border-bottom-color:var(--lime)}.metric-value .currency{color:var(--lime);font-size:16px;font-weight:700}.metric-value .unit{color:#728079;font-size:10px;font-weight:650;letter-spacing:.01em}.metric-foot{color:#66727c;font-size:9px;margin-top:8px;position:relative;z-index:1}
+    .section-block{margin-top:39px;scroll-margin-top:100px}.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:15px}.section-kicker{color:var(--lime);font-size:9px;font-weight:850;letter-spacing:.17em;text-transform:uppercase}h2{margin:5px 0 3px;font-size:22px;letter-spacing:-.04em;line-height:1.12;font-weight:770}.section-description{margin:0;color:var(--muted);font-size:11px}.section-right-note{color:#73807f;font-size:10px;display:flex;align-items:center;gap:7px;white-space:nowrap}.section-right-note .dot{width:5px;height:5px;border-radius:50%;background:var(--lime)}.panel{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(145deg,rgba(21,28,36,.96),rgba(17,22,28,.96));box-shadow:0 14px 38px rgba(0,0,0,.1)}.session-panel{padding:18px 19px 20px;margin-bottom:12px}.panel-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.panel-title{font-size:12px;font-weight:780;color:#e0e6e7;letter-spacing:-.01em}.panel-subtitle{font-size:9px;color:#71808a}.form-grid{display:grid;grid-template-columns:1fr 1.1fr 1.5fr 1fr;gap:11px}.field label{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#8b969f;font-size:9px;letter-spacing:.075em;text-transform:uppercase;font-weight:780;margin-bottom:6px}.field input{width:100%;min-width:0;min-height:40px;border:1px solid rgba(225,235,241,.1);border-radius:9px;padding:0 11px;color:#e6ecea;background:#10151b;font-size:11px;outline:none;transition:border .15s ease}.field input:focus{border-color:rgba(209,243,106,.7)}.field input::placeholder{color:#5f6b75}.field input[type=date]{color-scheme:dark}.input-prefix{position:relative}.input-prefix span{position:absolute;top:50%;left:11px;transform:translateY(-50%);color:var(--lime);font-size:11px;font-weight:700;pointer-events:none}.input-prefix input{padding-left:25px}
+    .score-panel{overflow:hidden}.score-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:17px 19px 14px;border-bottom:1px solid var(--line)}.score-title-wrap{display:flex;flex-direction:column;gap:3px}.score-toolbar-title{font-size:13px;font-weight:790}.score-toolbar-sub{color:#74818a;font-size:9px}.score-toolbar-right{display:flex;align-items:center;gap:13px}.scoring-setting{display:flex;gap:8px;align-items:center;color:#8c989f;font-size:9px;white-space:nowrap}.scoring-setting input{width:46px;height:29px;text-align:center;border:1px solid var(--line2);background:#0f1419;border-radius:7px;color:var(--lime);font-weight:800}.match-counter{color:#9aa6a4;font-size:9px;padding:6px 9px;background:rgba(255,255,255,.04);border-radius:99px;white-space:nowrap}.match-counter b{color:var(--lime)}.table-scroll{overflow-x:auto;scrollbar-color:#36414a #141a20;scrollbar-width:thin}table{width:100%;min-width:1000px;border-collapse:separate;border-spacing:0;table-layout:fixed}.score-table th,.score-table td{border-bottom:1px solid var(--line);border-right:1px solid rgba(225,235,241,.055)}.score-table th:last-child,.score-table td:last-child{border-right:0}.score-table th{height:66px;padding:7px 5px;background:#121820;color:#828f98;text-align:center;font-size:8px;letter-spacing:.08em;font-weight:850;text-transform:uppercase}.score-table th.player-col,.score-table td.player-col{width:158px;text-align:left;padding-left:15px;position:sticky;left:0;z-index:2;background:#141a21}.score-table th.player-col{z-index:3;background:#121820}.score-table th.match-col{width:84px}.score-table th.total-col{width:78px}.score-table tbody tr{height:65px}.score-table tbody tr:hover td{background-color:rgba(255,255,255,.018)}.score-table tbody tr:hover td.player-col{background:#182028}.player-cell{display:flex;align-items:center;gap:9px}.player-avatar{display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:9px;color:#dbf497;background:rgba(209,243,106,.1);border:1px solid rgba(209,243,106,.12);font-size:9px;font-weight:850}.player-name-input{width:94px;min-width:0;color:#e8eeee;background:transparent;border:0;border-bottom:1px solid transparent;padding:6px 2px;font-size:10px;font-weight:740;letter-spacing:.025em;outline:none;text-overflow:ellipsis}.player-name-input:focus{border-bottom-color:var(--lime)}.match-head{display:grid;justify-items:center;gap:4px}.match-index{color:var(--lime);font-size:8px;letter-spacing:.12em}.map-select{width:76px;max-width:100%;height:25px;border:1px solid rgba(225,235,241,.1);border-radius:6px;background:#10161c;color:#d1d9d5;text-align:center;padding:0 3px;font-size:9px;font-weight:700;letter-spacing:0;text-transform:none;outline:none}.map-select:focus{border-color:var(--lime)}.map-select option{background:#11161c;color:#eaf0ec}.score-table td{text-align:center;padding:5px 3px;background:rgba(18,24,31,.38)}.score-table td.player-col{background:#141a21}.score-input{width:43px;height:30px;text-align:center;padding:0 3px;border:1px solid rgba(225,235,241,.08);border-radius:7px;color:#dfe8e3;background:#10161c;font-size:10px;font-weight:750;appearance:textfield;-moz-appearance:textfield}.score-input::-webkit-inner-spin-button,.score-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.score-input:focus{border-color:rgba(209,243,106,.62)}.total-number{color:#cbd5d6;font-size:11px;font-weight:760}.total-number.highlight{color:var(--lime);font-size:12px}.team-only{color:#58666e;font-size:8px;letter-spacing:.05em}.placement-row td{height:58px;background:rgba(209,243,106,.035)}.placement-row td.player-col{background:#171f20}.placement-row .player-avatar{color:var(--lime);background:rgba(209,243,106,.12)}.placement-row .player-name-label{color:#d5ded4;font-size:9px;font-weight:750}.team-place-wrap{display:flex;justify-content:center;align-items:center;gap:4px}.team-place-wrap span{color:#8a9892;font-size:8px;font-weight:850}.team-place-input{width:45px;height:28px;text-align:center;padding:0 3px;border:1px solid rgba(209,243,106,.17);border-radius:6px;color:var(--lime);background:#111811;font-size:10px;font-weight:800;appearance:textfield;-moz-appearance:textfield}.team-place-input::-webkit-inner-spin-button,.team-place-input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.placement-total-cell{color:var(--lime);font-size:11px;font-weight:850}.team-total-cell{color:#e2edc5;font-size:12px;font-weight:850}.table-footer{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:11px 17px;color:#74818a;font-size:9px}.table-footer b{color:#a8b5b2;font-weight:750}.table-footer .scroll-tip{color:#637078}
+    .lower-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:13px;margin-top:14px}.upload-panel,.points-panel{padding:19px;min-height:217px}.upload-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.upload-heading h3,.points-panel h3{margin:0;font-size:13px;letter-spacing:-.02em}.upload-heading p,.points-panel p{margin:5px 0 0;color:#7e8a93;font-size:10px}.small-tag{color:#87948c;background:rgba(255,255,255,.04);padding:5px 8px;border-radius:99px;font-size:8px;font-weight:750;white-space:nowrap}.dropzone{width:100%;min-height:120px;margin-top:17px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px dashed rgba(200,218,225,.2);border-radius:12px;color:#a8b2b9;background:rgba(255,255,255,.018);text-align:center;cursor:pointer;transition:.18s ease}.dropzone:hover,.dropzone.dragging{border-color:var(--lime);background:rgba(209,243,106,.04)}.upload-icon{display:grid;place-items:center;width:33px;height:33px;border-radius:10px;color:var(--lime);background:var(--limeSoft)}.upload-icon svg{width:17px;height:17px}.dropzone strong{font-size:10px;font-weight:750}.dropzone span{color:#697680;font-size:9px}.image-preview{position:relative;margin-top:14px;overflow:hidden;border:1px solid var(--line);border-radius:11px;background:#0d1116}.image-preview img{display:block;max-width:100%;max-height:265px;margin:0 auto;object-fit:contain}.image-preview-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding:8px 10px;color:#9da9af;font-size:9px}.image-preview-footer span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.remove-image{border:0;border-radius:6px;padding:4px 7px;background:rgba(255,129,129,.1);color:#ff9d9d;font-size:8px;font-weight:750;cursor:pointer}.point-total-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:19px}.point-total{padding:13px 12px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.02)}.point-total.wide{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;background:rgba(209,243,106,.055);border-color:rgba(209,243,106,.14)}.point-label{color:#87939a;font-size:8px;font-weight:800;letter-spacing:.11em;text-transform:uppercase}.point-value{color:#edf3ef;font-size:22px;font-weight:820;letter-spacing:-.06em;margin-top:5px}.point-value.kill{color:var(--lime)}.point-value.place{color:var(--blue)}.point-total.wide .point-value{margin:0;color:var(--lime);font-size:25px}.point-note{color:#637078;font-size:8px;margin-top:3px}
+    .mvp-feature{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;margin-bottom:12px;border:1px solid rgba(255,184,106,.19);border-radius:15px;background:linear-gradient(105deg,rgba(255,184,106,.105),rgba(255,184,106,.035) 58%,rgba(255,255,255,.015))}.mvp-feature-left{display:flex;gap:13px;align-items:center;min-width:0}.mvp-medal{flex:none;display:grid;place-items:center;width:42px;height:42px;border:1px solid rgba(255,184,106,.28);border-radius:13px;background:rgba(255,184,106,.1);color:var(--orange);font-size:20px}.mvp-feature-label{color:#bb9164;font-size:8px;font-weight:850;letter-spacing:.15em}.mvp-feature-name{font-size:18px;font-weight:820;letter-spacing:-.04em;margin-top:2px}.mvp-feature-sub{color:#9b8d7d;font-size:9px;margin-top:2px}.mvp-feature-count{text-align:right;white-space:nowrap}.mvp-feature-count strong{display:block;color:var(--orange);font-size:21px;letter-spacing:-.05em}.mvp-feature-count span{color:#9b8d7d;font-size:8px;text-transform:uppercase;letter-spacing:.12em}.mvp-match-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.mvp-match-card{min-width:0;padding:13px 14px 12px;border:1px solid var(--line);border-radius:13px;background:linear-gradient(145deg,#141a21,#11161c)}.mvp-match-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.mvp-match-number{color:var(--lime);font-size:8px;font-weight:850;letter-spacing:.13em}.mvp-match-map{color:#8d989e;font-size:9px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;max-width:130px}.mvp-select-label{display:block;color:#718089;font-size:8px;text-transform:uppercase;letter-spacing:.10em;font-weight:800;margin:11px 0 5px}.mvp-select{width:100%;border:1px solid rgba(225,235,241,.09);border-radius:8px;background:#0f1419;color:#d8e0df;font-size:10px;min-height:34px;padding:0 8px;outline:none}.mvp-select:focus{border-color:rgba(209,243,106,.55)}.mvp-auto-note{color:#65727b;font-size:8px;margin-top:6px}
+    .leaderboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.leaderboard-panel{padding:19px}.leaderboard-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.leaderboard-title{display:flex;gap:9px;align-items:center}.leaderboard-icon{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:rgba(209,243,106,.09);color:var(--lime)}.leaderboard-icon.kill{color:var(--blue);background:rgba(122,168,255,.1)}.leaderboard-icon svg{width:15px;height:15px}.leaderboard-title h3{margin:0;font-size:12px}.leaderboard-title p{margin:3px 0 0;color:#72808a;font-size:9px}.board-period{color:#78858c;font-size:8px;border:1px solid var(--line);padding:5px 7px;border-radius:99px;white-space:nowrap}.rank-list{display:grid;gap:8px}.rank-row{display:grid;grid-template-columns:25px minmax(90px,.8fr) minmax(60px,1.2fr) 39px;gap:9px;align-items:center;padding:8px 0;border-top:1px solid rgba(225,235,241,.055)}.rank-num{color:#64717a;font-size:9px;font-weight:800}.rank-row:first-child .rank-num{color:var(--orange)}.rank-name{color:#c7d0d0;font-size:10px;font-weight:720;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bar-track{height:5px;overflow:hidden;background:#252e36;border-radius:99px}.bar-fill{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#a7d74f,var(--lime));transition:width .3s ease}.bar-fill.blue{background:linear-gradient(90deg,#527bd2,#8db7ff)}.rank-score{color:var(--lime);text-align:right;font-size:10px;font-weight:800}.rank-score.blue{color:var(--blue)}.leaderboard-foot{color:#66737b;font-size:8px;margin-top:11px}
+    .submit-panel{padding:19px}.submit-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:15px}.submit-intro h3{margin:0;font-size:13px}.submit-intro p{margin:4px 0 0;color:#7e8a93;font-size:10px}.submit-actions{display:flex;align-items:center;gap:8px}.submit-hint{color:#75818a;font-size:9px;margin:0 0 12px}.submission-list{display:grid;gap:8px}.submitted-row{display:grid;grid-template-columns:minmax(185px,1.45fr) .6fr .7fr .65fr auto auto;gap:10px;align-items:center;padding:12px;border:1px solid rgba(225,235,241,.07);border-radius:12px;background:rgba(255,255,255,.018)}.submitted-primary{display:flex;align-items:center;gap:11px;min-width:0}.submitted-mark{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:rgba(209,243,106,.09);color:var(--lime);font-size:11px;font-weight:850}.submitted-name{min-width:0}.submitted-name strong{display:block;color:#e3eae6;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.submitted-name span{display:block;color:#77848b;font-size:8px;margin-top:3px}.submitted-stat span{display:block;color:#64727a;font-size:7px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.submitted-stat b{display:block;color:#c7d4d2;font-size:10px;margin-top:3px}.submitted-row .btn{min-height:31px;padding:0 9px;font-size:9px}.empty-reports{padding:25px 15px;text-align:center;color:#75818a;border:1px dashed rgba(225,235,241,.11);border-radius:12px;font-size:10px}.empty-reports strong{display:block;color:#bcc6c8;font-size:11px;margin-bottom:4px}.loading-reports{color:#75818a;padding:18px;font-size:10px;text-align:center}.report-error{color:#ffb0b0;font-size:10px;padding:14px;border:1px solid rgba(255,129,129,.18);border-radius:10px;background:rgba(255,129,129,.04)}
+    .footer{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#56626b;font-size:9px;margin-top:34px;padding:15px 2px 0;border-top:1px solid var(--line)}.footer span:last-child{color:#68746c}.toast{position:fixed;z-index:20;right:22px;bottom:20px;padding:10px 13px;border:1px solid rgba(209,243,106,.2);border-radius:10px;background:#1a2318;color:#d9f29d;box-shadow:var(--shadow);font-size:10px;opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s ease}.toast.show{opacity:1;transform:translateY(0)}.empty-text{color:#76828a}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .modal-backdrop{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:18px;background:rgba(3,5,7,.78);backdrop-filter:blur(9px)}.modal-backdrop[hidden]{display:none}.modal-card{width:min(100%,390px);padding:22px;border:1px solid rgba(209,243,106,.18);border-radius:17px;background:linear-gradient(145deg,#182027,#11161c);box-shadow:0 28px 90px rgba(0,0,0,.5)}.modal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.modal-top h3{margin:0;font-size:17px;letter-spacing:-.04em}.modal-top p{color:#88959b;font-size:10px;margin:5px 0 0}.modal-close{width:29px;height:29px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.03);color:#aab4ba;cursor:pointer}.modal-close svg{width:14px;height:14px}.modal-form{margin-top:19px}.modal-form label{display:block;color:#9aa6ac;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}.modal-form input{width:100%;height:42px;border:1px solid var(--line2);border-radius:9px;background:#0c1116;color:#ecf1ee;padding:0 11px;font-size:12px}.modal-error{min-height:16px;margin-top:7px;color:#ff9d9d;font-size:9px}.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}.modal-note{color:#69767e;font-size:8px;margin-top:14px;line-height:1.5}.readonly-field{opacity:.88}.readonly-field:disabled{cursor:not-allowed}input:disabled,select:disabled{-webkit-text-fill-color:#cbd5d2;opacity:.9}.team-only{user-select:none}
+    @media(max-width:1180px){.content{padding-left:24px;padding-right:24px}.topbar{padding-left:24px;padding-right:24px}.app-shell{grid-template-columns:220px minmax(0,1fr)}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mvp-match-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.submitted-row{grid-template-columns:minmax(160px,1.2fr) .6fr .7fr auto auto}.submitted-row .submitted-stat:nth-child(4){display:none}}
+    @media(max-width:900px){.app-shell{display:block}.sidebar{position:relative;height:auto;min-height:0;padding:12px 18px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:0}.brand-mark{width:32px;height:32px}.nav-label,.workspace-card,.side-note{display:none}.nav-list{display:flex;justify-content:flex-end;gap:4px;overflow-x:auto}.nav-link{width:auto;padding:9px 10px;white-space:nowrap;font-size:10px}.nav-link svg{width:15px;height:15px}.sidebar-spacer{display:none}.main{min-width:0}.content{max-width:100%}}
+    @media(max-width:700px){.submitted-row{grid-template-columns:1fr auto auto}.submitted-row .submitted-stat{display:none!important}.submitted-primary{grid-column:1}.submitted-row .view-btn{grid-column:2;grid-row:1}.submitted-row .copy-btn{grid-column:3;grid-row:1}}
+    @media(max-width:660px){.sidebar{grid-template-columns:1fr;padding:11px 14px 9px;gap:9px}.brand{padding:0 3px}.brand-name{font-size:12px}.brand-sub{font-size:8px;margin-top:3px}.nav-list{justify-content:flex-start;margin:0 -3px;padding-bottom:1px}.nav-link{padding:8px 9px;gap:6px;font-size:9px}.nav-link svg{width:13px;height:13px}.topbar{height:58px;padding:0 12px}.crumbs{font-size:8px;gap:6px}.top-actions{gap:5px}.save-state{display:none}.top-actions .btn{min-height:32px;padding:0 8px;font-size:8px}.top-actions .btn svg{width:13px;height:13px}.content{padding:15px 12px 40px}.mode-strip{padding:8px 13px;font-size:8px}.hero{min-height:auto;padding:21px 17px;gap:10px;align-items:flex-start}.hero:before{right:-120px;top:-165px}.hero-right{min-width:102px;padding:10px}.hero-right-label{font-size:7px}.hero-lobby{font-size:19px}.hero-right-detail{font-size:8px;max-width:90px}.hero-copy p{max-width:265px;font-size:10px}.hero-tags{margin-top:14px}.hero-tag{font-size:8px;padding:5px 8px}h1{font-size:29px;margin-top:10px}.stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 31px}.metric-card{min-height:112px;padding:12px}.metric-head{font-size:8px}.metric-value strong,.metric-value input{font-size:24px}.metric-foot{font-size:8px}.section-block{margin-top:31px}.section-heading{align-items:flex-start;flex-direction:column;gap:8px;margin-bottom:12px}h2{font-size:20px}.section-right-note{white-space:normal}.session-panel{padding:14px}.form-grid{grid-template-columns:1fr 1fr;gap:9px}.field label{font-size:8px}.field input{min-height:37px;padding-left:9px;font-size:10px}.input-prefix input{padding-left:23px}.score-toolbar{align-items:flex-start;flex-direction:column;padding:14px;gap:10px}.score-toolbar-right{width:100%;justify-content:space-between}.table-footer{align-items:flex-start;flex-direction:column;gap:5px;padding:10px 13px}.lower-grid,.leaderboard-grid{grid-template-columns:1fr}.upload-panel,.points-panel,.leaderboard-panel,.submit-panel{padding:15px}.mvp-match-grid{grid-template-columns:1fr 1fr;gap:8px}.mvp-match-card{padding:11px}.mvp-match-map{max-width:90px}.mvp-feature{padding:14px}.mvp-feature-name{font-size:16px}.footer{align-items:flex-start;flex-direction:column}.submit-intro{flex-direction:column}.submit-actions{width:100%;justify-content:flex-start}}
+    @media(max-width:480px){.crumbs{display:none}.topbar{justify-content:flex-end}#shareCurrentBtn .share-label{display:none}#newReportBtn{width:34px;padding:0;font-size:0}#newReportBtn svg{width:15px;height:15px}}
+    @media(max-width:390px){.hero-right{display:none}.top-actions .export-label{display:none}.mvp-match-grid{grid-template-columns:1fr}.mvp-match-map{max-width:160px}.form-grid{grid-template-columns:1fr}.mode-strip{align-items:flex-start}.mode-message{line-height:1.4}}
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3.2"/><path d="M12 1.8v3M12 19.2v3M1.8 12h3M19.2 12h3"/></svg></div><div><div class="brand-name">DROPZONE</div><div class="brand-sub">MATCHDAY LEDGER</div></div></div>
+      <div class="nav-label">YOUR WORKSPACE</div>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-link active" data-scroll="overview" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></svg>Overview</button>
+        <button class="nav-link" data-scroll="tracker" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 10h16M4 15h10M4 20h10"/><path d="M18 15v6M15 18h6"/></svg>Lobby tracker</button>
+        <button class="nav-link" data-scroll="points" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg>Points &amp; MVP</button>
+        <button class="nav-link" data-scroll="leaderboards" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/><path d="m3 6 5-3 5 4 7-5"/></svg>Leaderboards</button>
+        <button class="nav-link" data-scroll="submissions" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/><path d="m16 4 3 3"/></svg>Section 5 · Submitted</button>
+      </nav>
+      <div class="sidebar-spacer"></div>
+      <div class="workspace-card"><div class="workspace-title">SHARED MATCHDAY</div><div class="workspace-sub"><span class="live-dot"></span>Admin edits · teammates view</div></div>
+      <div class="side-note">Shared reports are view-only unless admin unlocks editing.</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="crumbs"><span>WORKSPACE</span><span>›</span><b>DAILY REPORT</b></div>
+        <div class="top-actions">
+          <div class="save-state" id="saveState"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 9.2 17 19 7"/></svg><span id="saveText">Loading report…</span></div>
+          <button class="btn" type="button" id="exportBtn" title="Download this report as a CSV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg><span class="export-label">Export CSV</span></button>
+          <button class="btn btn-outline-lime" type="button" id="shareCurrentBtn" disabled title="Submit a report before sharing"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/></svg><span class="share-label">Share link</span></button>
+          <button class="btn" type="button" id="newReportBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New</button>
+          <button class="btn btn-primary" type="button" id="authBtn">Admin sign in</button>
+        </div>
+      </header>
+      <div class="mode-strip viewer" id="modeStrip"><span class="mode-pill" id="modePill">VIEW MODE</span><span class="mode-message" id="modeMessage">Only the admin can edit. Sign in to unlock the scorecard.</span></div>
+
+      <div class="content">
+        <section class="hero" id="overview">
+          <div class="hero-copy"><div class="eyebrow" id="heroDate">MATCHDAY REPORT</div><h1>Daily lobby <span>report</span></h1><p>Track the squad's kills, shared placement points, MVPs and lobby results in one matchday sheet.</p><div class="hero-tags"><span class="hero-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.5 9.2 17 19 7"/></svg><span id="heroTeam">Team name</span></span><span class="hero-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><span id="heroDateTag">Today</span></span></div></div>
+          <div class="hero-right"><div class="hero-right-label">CURRENT LOBBY</div><div class="hero-lobby" id="heroLobby">#—</div><div class="hero-right-detail" id="heroLobbyDetail">Add a lobby number to begin</div></div>
+        </section>
+
+        <section class="stats-grid" aria-label="Daily summary">
+          <article class="metric-card"><div class="metric-head"><span>Total lobbies played</span><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M6 4h12M5 7l1 13h12l1-13"/><path d="M9 11v5M15 11v5"/></svg></span></div><div class="metric-value"><input type="number" min="0" step="1" id="metricLobbies" data-meta="lobbiesPlayed" aria-label="Total lobbies played"/><span class="unit">lobbies</span></div><div class="metric-foot">Editable day total</div></article>
+          <article class="metric-card"><div class="metric-head"><span>Total matches played</span><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div><div class="metric-value"><strong id="metricMatches">00</strong><span class="unit">matches</span></div><div class="metric-foot">Calculated from maps and scores</div></article>
+          <article class="metric-card"><div class="metric-head"><span>Total amount spent</span><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></svg></span></div><div class="metric-value"><span class="currency">₹</span><input type="number" min="0" step="1" id="metricSpent" data-meta="amountSpent" aria-label="Total amount spent"/></div><div class="metric-foot">Editable day total</div></article>
+          <article class="metric-card"><div class="metric-head"><span>Total amount earned</span><span class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6.5c-.7-1.4-2.1-2-4.1-2-2.2 0-3.7 1-3.7 2.7 0 4.4 8.6 1.7 8.6 6.4 0 1.9-1.7 3.1-4.4 3.1-2.2 0-3.8-.8-4.7-2.3"/></svg></span></div><div class="metric-value"><span class="currency">₹</span><input type="number" min="0" step="1" id="metricEarned" data-meta="amountEarned" aria-label="Total amount earned"/></div><div class="metric-foot">Editable day total</div></article>
+        </section>
+
+        <section class="section-block" id="tracker">
+          <div class="section-heading"><div><div class="section-kicker">01 / SESSION</div><h2>Lobby tracker</h2><p class="section-description">Select the map for each match, enter each player's kills, then add one placement score for the team.</p></div><div class="section-right-note"><span class="dot"></span>Shared placement points are entered once per match</div></div>
+          <article class="panel session-panel"><div class="panel-heading"><div class="panel-title">Lobby details</div><div class="panel-subtitle">Date · team · lobby number</div></div><div class="form-grid">
+            <div class="field"><label for="lobbyNo">Lobby no.</label><input id="lobbyNo" data-meta="lobbyNo" type="text" placeholder="e.g. 014" autocomplete="off"/></div>
+            <div class="field"><label for="entryAmount">Entry amount</label><div class="input-prefix"><span>₹</span><input id="entryAmount" data-meta="entryAmount" type="number" min="0" step="1" placeholder="0"/></div></div>
+            <div class="field"><label for="teamName">Team name</label><input id="teamName" data-meta="teamName" type="text" placeholder="Enter your squad name" autocomplete="off"/></div>
+            <div class="field"><label for="reportDate">Date</label><input id="reportDate" data-meta="date" type="date"/></div>
+          </div></article>
+          <article class="panel score-panel"><div class="score-toolbar"><div class="score-title-wrap"><div class="score-toolbar-title">Player match scorecard</div><div class="score-toolbar-sub">Five map choices · kills per player · placement points once per team per match</div></div><div class="score-toolbar-right"><label class="scoring-setting" for="killPointValue">Points per kill <input id="killPointValue" type="number" min="0" step="0.5" aria-label="Points awarded per kill"/></label><div class="match-counter"><b id="scoreMatchCount">0 / 6</b>&nbsp; matches logged</div></div></div><div class="table-scroll" id="scoreTableWrap"></div><div class="table-footer"><span><b>K</b> = individual kills &nbsp;·&nbsp; <b>TEAM PLACE</b> = one placement score per match for all four players</span><span class="scroll-tip">On small screens, swipe the scorecard sideways →</span></div></article>
+        </section>
+
+        <section class="section-block" id="points"><div class="section-heading"><div><div class="section-kicker">02 / POINTS &amp; EVIDENCE</div><h2>Points &amp; table image</h2><p class="section-description">Save the official points-table screenshot beside the calculated team totals.</p></div></div><div class="lower-grid">
+          <article class="panel upload-panel"><div class="upload-heading"><div><h3>Point table image</h3><p>Upload a screenshot or photo of the final points table.</p></div><span class="small-tag">OPTIONAL</span></div><input type="file" id="pointFile" accept="image/*" class="sr-only" aria-label="Upload points table image"/><div id="pointTablePreview"></div></article>
+          <article class="panel points-panel"><h3>Points breakdown</h3><p>Team total · all four players' kills plus one placement score per match.</p><div class="point-total-grid"><div class="point-total"><div class="point-label">Total kill points</div><div class="point-value kill" id="totalKillPoints">0</div><div class="point-note">Squad kills × point value</div></div><div class="point-total"><div class="point-label">Total placement points</div><div class="point-value place" id="totalPlacementPoints">0</div><div class="point-note">Team placement scores</div></div><div class="point-total wide"><div><div class="point-label">Combined team points</div><div class="point-note">Kill points + placement points</div></div><div class="point-value" id="totalCombinedPoints">0</div></div></div></article>
+        </div></section>
+
+        <section class="section-block" id="mvps"><div class="section-heading"><div><div class="section-kicker">03 / PLAYER SPOTLIGHT</div><h2>MVP room</h2><p class="section-description">Match MVPs are suggested from kills; the admin can choose a different player.</p></div><div class="section-right-note"><span class="dot"></span>Auto-suggested · manually editable</div></div><div class="mvp-feature" id="dailyMvpFeature"></div><div class="mvp-match-grid" id="mvpMatchGrid"></div></section>
+
+        <section class="section-block" id="leaderboards"><div class="section-heading"><div><div class="section-kicker">04 / LEADERBOARDS</div><h2>Squad standings</h2><p class="section-description">A quick read on match MVPs and eliminations for this lobby.</p></div></div><div class="leaderboard-grid">
+          <article class="panel leaderboard-panel"><div class="leaderboard-heading"><div class="leaderboard-title"><div class="leaderboard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.9-.9L12 3Z"/></svg></div><div><h3>MVP leaderboard</h3><p>Ranked by match MVP count</p></div></div><span class="board-period">THIS LOBBY</span></div><div class="rank-list" id="mvpLeaderboard"></div><div class="leaderboard-foot">MVP count follows the matchwise selections above.</div></article>
+          <article class="panel leaderboard-panel"><div class="leaderboard-heading"><div class="leaderboard-title"><div class="leaderboard-icon kill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5 19 10M4 20l6.5-1.5L20 9a2.8 2.8 0 0 0-4-4l-9.5 9.5L5 21Z"/><path d="m13 6 5 5"/></svg></div><div><h3>Kill leaderboard</h3><p>Ranked by total kills</p></div></div><span class="board-period">THIS LOBBY</span></div><div class="rank-list" id="killLeaderboard"></div><div class="leaderboard-foot">Totals update as the match scorecard changes.</div></article>
+        </div></section>
+
+        <section class="section-block" id="submissions"><div class="section-heading"><div><div class="section-kicker">05 / SUBMITTED LOBBIES</div><h2>Submitted reports</h2><p class="section-description">Published lobby sheets appear here with a shareable, read-only link for teammates.</p></div><div class="section-right-note"><span class="dot"></span>Admin submits · everyone can view</div></div>
+          <article class="panel submit-panel"><div class="submit-intro"><div><h3>Publish this lobby</h3><p>Submitting saves all entered values and adds the report to Section 5.</p></div><div class="submit-actions"><button class="btn btn-primary" id="submitReportBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 9.2 17 19 7"/></svg><span id="submitButtonText">Submit lobby</span></button></div></div><p class="submit-hint" id="submitHint">Enter a date, team name and lobby number. After submission, copy the report link to share it with your teammates.</p><div class="submission-list" id="submissionList"><div class="loading-reports">Loading submitted reports…</div></div></article>
+        </section>
+        <footer class="footer"><span>DROPZONE MATCHDAY LEDGER · BUILT FOR YOUR SQUAD</span><span>Share links are read-only · Admin password required to edit</span></footer>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="authModal" hidden role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-card"><div class="modal-top"><div><h3 id="authTitle">Unlock editor</h3><p>Sign in as admin to edit the lobby sheet.</p></div><button type="button" class="modal-close" id="closeAuth" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+      <form id="authForm" class="modal-form"><label for="adminPassword">Admin password</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Enter admin password" required/><div class="modal-error" id="authError" aria-live="polite"></div><div class="modal-footer"><button class="btn" type="button" id="cancelAuth">Cancel</button><button class="btn btn-primary" id="unlockBtn" type="submit">Unlock editor</button></div></form>
+      <div class="modal-note">Only the admin session can save or submit edits. Shared report links remain view-only for teammates.</div>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const STORAGE_KEY = 'dropzone-matchday-draft-v2';
+      const MATCH_COUNT = 6;
+      const PLAYER_COUNT = 4;
+      const MAPS = ['Bermuda', 'Kalahari', 'Purgatory', 'Nexterra', 'Solara'];
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+      let state = blankState();
+      let currentReportId = null;
+      let isAdmin = false;
+      let adminToken = '';
+      let isSharedReport = false;
+      let pendingAction = null;
+      let saveTimer;
+      let toastTimer;
+
+      function localDateString() {
+        const now = new Date();
+        return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+      }
+      function blankMatches() { return Array.from({ length: MATCH_COUNT }, () => ({ map: '', kills: Array(PLAYER_COUNT).fill(0), placementPoints: 0 })); }
+      function blankState() {
+        return { meta: { date: localDateString(), lobbyNo: '', entryAmount: 0, teamName: '', lobbiesPlayed: 0, amountSpent: 0, amountEarned: 0 }, players: Array.from({ length: PLAYER_COUNT }, (_, i) => ({ id: `p${i + 1}`, name: `Player ${i + 1}` })), matches: blankMatches(), mvpOverrides: Array(MATCH_COUNT).fill(null), killPointValue: 1, pointImage: null };
+      }
+      function normalizeState(value) {
+        const fallback = blankState();
+        if (!value || !value.meta || !Array.isArray(value.players) || !Array.isArray(value.matches)) return fallback;
+        const result = { ...fallback, ...value, meta: { ...fallback.meta, ...value.meta } };
+        result.players = Array.from({ length: PLAYER_COUNT }, (_, i) => ({ id: `p${i + 1}`, name: String(value.players[i]?.name ?? `Player ${i + 1}`).slice(0, 18) }));
+        result.matches = Array.from({ length: MATCH_COUNT }, (_, i) => {
+          const match = value.matches[i] || {};
+          let map = match.map || match.name || '';
+          if (!MAPS.includes(map)) map = '';
+          return { map, kills: Array.from({ length: PLAYER_COUNT }, (_, j) => Math.max(0, Number(match.kills?.[j]) || 0)), placementPoints: Math.max(0, Number(match.placementPoints) || 0) };
+        });
+        result.mvpOverrides = Array.from({ length: MATCH_COUNT }, (_, i) => value.mvpOverrides?.[i] || null);
+        result.killPointValue = Math.max(0, Number(value.killPointValue ?? 1) || 0);
+        if (!result.pointImage || typeof result.pointImage.data !== 'string') result.pointImage = null;
+        return result;
+      }
+      function escapeHTML(value) { return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char])); }
+      function formatDay(dateString) {
+        if (!dateString) return 'DATE NOT SET';
+        const date = new Date(`${dateString}T12:00:00`);
+        if (Number.isNaN(date.getTime())) return 'DATE NOT SET';
+        return new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' }).format(date).toUpperCase();
+      }
+      function displayDate(dateString) {
+        if (!dateString) return 'Date not set';
+        const date = new Date(`${dateString}T12:00:00`);
+        return Number.isNaN(date.getTime()) ? 'Date not set' : new Intl.DateTimeFormat('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).format(date);
+      }
+      function playerName(index) { return (state.players[index]?.name || `Player ${index + 1}`).trim() || `Player ${index + 1}`; }
+      function initials(name) { return name.trim().split(/\s+/).slice(0, 2).map(part => part[0] || '').join('').toUpperCase() || 'P'; }
+      function matchIsActive(index) { const match = state.matches[index]; return Boolean(match.map) || match.kills.some(n => Number(n) > 0) || Number(match.placementPoints) > 0 || Boolean(state.mvpOverrides[index]); }
+      function getMatchLeader(index) {
+        const kills = state.matches[index].kills.map(n => Number(n) || 0);
+        const max = Math.max(...kills);
+        if (max <= 0) return null;
+        return state.players[kills.findIndex(n => n === max)]?.id || null;
+      }
+      function getMatchMvp(index) {
+        const override = state.mvpOverrides[index];
+        return override && state.players.some(player => player.id === override) ? override : getMatchLeader(index);
+      }
+      function playerIndex(id) { return state.players.findIndex(player => player.id === id); }
+      function totals() {
+        let kills = 0;
+        let placement = 0;
+        const perPlayer = state.players.map((player, p) => {
+          const playerKills = state.matches.reduce((sum, match) => sum + (Number(match.kills[p]) || 0), 0);
+          kills += playerKills;
+          return { id: player.id, name: playerName(p), kills: playerKills, killPoints: playerKills * Number(state.killPointValue || 0) };
+        });
+        state.matches.forEach(match => { placement += Number(match.placementPoints) || 0; });
+        const activeMatches = state.matches.filter((_, i) => matchIsActive(i)).length;
+        const mvpCounts = Object.fromEntries(state.players.map(player => [player.id, 0]));
+        state.matches.forEach((_, i) => { const winner = getMatchMvp(i); if (winner && matchIsActive(i)) mvpCounts[winner] = (mvpCounts[winner] || 0) + 1; });
+        const killPoints = kills * Number(state.killPointValue || 0);
+        return { kills, killPoints, placement, combined: killPoints + placement, activeMatches, perPlayer, mvpCounts };
+      }
+      function setMetaField(field, value) {
+        const numeric = ['entryAmount', 'lobbiesPlayed', 'amountSpent', 'amountEarned'].includes(field);
+        state.meta[field] = numeric ? Math.max(0, Number(value) || 0) : value;
+      }
+      function getShareUrl(id) { const url = new URL(window.location.href); url.search = ''; url.searchParams.set('report', id); url.hash = ''; return url.toString(); }
+      async function api(path, options = {}) {
+        const headers = { ...(options.headers || {}) };
+        if (options.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+        if (adminToken) headers.Authorization = `Bearer ${adminToken}`;
+        const response = await fetch(path, { ...options, headers });
+        let data = {};
+        try { data = await response.json(); } catch (_) { data = {}; }
+        if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+        return data;
+      }
+      function showToast(message) {
+        const toast = $('#toast'); toast.textContent = message; toast.classList.add('show');
+        clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+      }
+      function localSaveDraft() {
+        if (currentReportId) return;
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+        catch (_) { $('#saveText').textContent = 'Browser storage full · export a CSV'; }
+      }
+      function markChanged() {
+        if (!isAdmin) return;
+        if (currentReportId) {
+          $('#saveText').textContent = 'Unsaved changes';
+        } else {
+          $('#saveText').textContent = 'Saving draft…';
+          localSaveDraft();
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(() => { if (!currentReportId) $('#saveText').textContent = 'Draft saved on this device'; }, 450);
+        }
+        setModeUi();
+      }
+      function setModeUi() {
+        const strip = $('#modeStrip');
+        const pill = $('#modePill');
+        const message = $('#modeMessage');
+        const authBtn = $('#authBtn');
+        const share = $('#shareCurrentBtn');
+        const submitText = $('#submitButtonText');
+        const submitHint = $('#submitHint');
+        if (isAdmin) {
+          strip.classList.remove('viewer', 'error');
+          pill.textContent = 'ADMIN EDITOR';
+          message.textContent = currentReportId ? 'Editing a published lobby · use Save changes to update the shared report.' : 'Editor unlocked · this draft autosaves on this device until submitted.';
+          authBtn.textContent = 'Sign out';
+          authBtn.classList.remove('btn-primary');
+        } else {
+          strip.classList.add('viewer');
+          strip.classList.remove('error');
+          pill.textContent = currentReportId ? 'VIEW ONLY' : 'VIEW MODE';
+          message.textContent = currentReportId ? 'Shared report · teammates can view all values. Admin sign-in is required to edit.' : 'Only the admin can enter values. Sign in with the admin password to unlock editing.';
+          authBtn.textContent = 'Admin sign in';
+          authBtn.classList.add('btn-primary');
+        }
+        share.disabled = !currentReportId;
+        share.title = currentReportId ? 'Copy a read-only share link' : 'Submit a report before sharing';
+        submitText.textContent = currentReportId ? 'Save changes' : 'Submit lobby';
+        submitHint.textContent = currentReportId ? 'Save changes to update the existing share link; your teammates will see the updated values.' : 'Enter a date, team name and lobby number. After submission, copy the report link to share it with your teammates.';
+        $('#newReportBtn').title = isAdmin ? 'Start a blank lobby sheet' : 'Admin sign-in required to start a new sheet';
+      }
+      function applyEditorAccess() {
+        const selectors = ['[data-meta]', '[data-player-name]', '[data-match-map]', '[data-stat]', '[data-placement-match]', '[data-mvp-match]', '#killPointValue', '#pointFile', '#uploadTrigger', '#removePointImage'];
+        selectors.forEach(selector => $$(selector).forEach(element => {
+          element.disabled = !isAdmin;
+          element.classList.toggle('readonly-field', !isAdmin);
+        }));
+        setModeUi();
+      }
+
+      function renderScoreTable() {
+        const mapOptions = (selected) => `<option value="" ${!selected ? 'selected' : ''}>Select map</option>${MAPS.map(map => `<option value="${map}" ${selected === map ? 'selected' : ''}>${map}</option>`).join('')}`;
+        const matchHeads = state.matches.map((match, i) => `<th class="match-col"><div class="match-head"><span class="match-index">MATCH 0${i + 1}</span><select class="map-select" data-match-map="${i}" aria-label="Choose map for match ${i + 1}">${mapOptions(match.map)}</select><span class="match-legend">PLAYER KILLS</span></div></th>`).join('');
+        const rows = state.players.map((player, p) => {
+          const cells = state.matches.map((match, m) => `<td><input class="score-input" type="number" inputmode="numeric" min="0" step="1" value="${Number(match.kills[p]) || 0}" data-player="${p}" data-match="${m}" data-stat="kills" aria-label="${escapeHTML(playerName(p))} kills in match ${m + 1}"/></td>`).join('');
+          return `<tr><td class="player-col"><div class="player-cell"><span class="player-avatar" data-avatar="${p}">${escapeHTML(initials(playerName(p)))}</span><input class="player-name-input" type="text" maxlength="18" value="${escapeHTML(playerName(p))}" data-player-name="${p}" aria-label="Player ${p + 1} name"/></div></td>${cells}<td><span class="total-number" id="player-kills-${p}">0</span></td><td><span class="total-number highlight" id="player-killpts-${p}">0</span></td><td class="team-only"></td><td class="team-only"></td></tr>`;
+        }).join('');
+        const placements = state.matches.map((match, m) => `<td><label class="team-place-wrap"><span>P</span><input class="team-place-input" type="number" inputmode="numeric" min="0" step="1" value="${Number(match.placementPoints) || 0}" data-placement-match="${m}" aria-label="Team placement points in match ${m + 1}"/></label></td>`).join('');
+        $('#scoreTableWrap').innerHTML = `<table class="score-table" aria-label="Team match scorecard"><colgroup><col style="width:158px"/>${Array.from({ length: MATCH_COUNT }, () => '<col style="width:84px"/>').join('')}<col style="width:78px"/><col style="width:78px"/><col style="width:88px"/><col style="width:83px"/></colgroup><thead><tr><th class="player-col">PLAYERS</th>${matchHeads}<th class="total-col">TOTAL<br/>KILLS</th><th class="total-col">KILL<br/>POINTS</th><th class="total-col">TEAM PLACE<br/>POINTS</th><th class="total-col">TOTAL<br/>POINTS</th></tr></thead><tbody>${rows}<tr class="placement-row"><td class="player-col"><div class="player-cell"><span class="player-avatar">T</span><span class="player-name-label">TEAM PLACEMENT</span></div></td>${placements}<td><span class="total-number" id="footerKills">0</span></td><td><span class="total-number highlight" id="footerKillPoints">0</span></td><td><span class="placement-total-cell" id="footerPlacementPoints">0</span></td><td><span class="team-total-cell" id="footerTeamPoints">0</span></td></tr></tbody></table>`;
+      }
+
+      function renderMvp() {
+        const t = totals();
+        const ranked = state.players.map((player, i) => ({ id: player.id, name: playerName(i), count: t.mvpCounts[player.id] || 0 })).sort((a, b) => b.count - a.count);
+        const top = ranked[0]?.count || 0;
+        const winners = ranked.filter(player => player.count === top && top > 0);
+        let name = 'Waiting for match MVPs';
+        let detail = 'Enter match kills or choose match MVPs to build today’s spotlight.';
+        if (winners.length === 1) { name = winners[0].name; detail = `${top} match MVP${top === 1 ? '' : 's'} · leading the squad in this lobby`; }
+        else if (winners.length > 1) { name = 'Tied at the top'; detail = `${winners.map(person => person.name).join(' · ')} share ${top} MVP${top === 1 ? '' : 's'} each`; }
+        $('#dailyMvpFeature').innerHTML = `<div class="mvp-feature-left"><div class="mvp-medal" aria-hidden="true">✦</div><div><div class="mvp-feature-label">OVERALL MVP OF THE DAY</div><div class="mvp-feature-name">${escapeHTML(name)}</div><div class="mvp-feature-sub">${escapeHTML(detail)}</div></div></div><div class="mvp-feature-count"><strong>${top}</strong><span>match MVP${top === 1 ? '' : 's'}</span></div>`;
+        $('#mvpMatchGrid').innerHTML = state.matches.map((match, i) => {
+          const active = matchIsActive(i);
+          const autoId = getMatchLeader(i);
+          const autoIndex = autoId ? playerIndex(autoId) : -1;
+          const autoLabel = autoIndex >= 0 ? playerName(autoIndex) : 'Not set';
+          const override = state.mvpOverrides[i] || '';
+          const options = state.players.map((player, p) => `<option value="${player.id}" ${override === player.id ? 'selected' : ''}>${escapeHTML(playerName(p))}</option>`).join('');
+          const map = match.map || (active ? 'Map not selected' : 'No score yet');
+          return `<article class="mvp-match-card"><div class="mvp-match-top"><span class="mvp-match-number">MATCH 0${i + 1}</span><span class="mvp-match-map" title="${escapeHTML(map)}">${escapeHTML(map)}</span></div><label class="mvp-select-label" for="mvp-select-${i}">Match MVP</label><select class="mvp-select" id="mvp-select-${i}" data-mvp-match="${i}" aria-label="Match ${i + 1} MVP"><option value="" ${!override ? 'selected' : ''}>Auto · ${escapeHTML(autoLabel)}</option>${options}</select><div class="mvp-auto-note">${override ? 'Manual selection' : active && autoId ? 'Suggested from highest kills' : 'Enter kills for a suggestion'}</div></article>`;
+        }).join('');
+      }
+      function renderLeaderboard() {
+        const t = totals();
+        const mvpPlayers = t.perPlayer.map(player => ({ ...player, score: t.mvpCounts[player.id] || 0 })).sort((a, b) => b.score - a.score || b.kills - a.kills);
+        const killPlayers = [...t.perPlayer].sort((a, b) => b.kills - a.kills);
+        const maxMvp = Math.max(1, ...mvpPlayers.map(player => player.score));
+        const maxKills = Math.max(1, ...killPlayers.map(player => player.kills));
+        $('#mvpLeaderboard').innerHTML = mvpPlayers.map((player, i) => `<div class="rank-row"><span class="rank-num">0${i + 1}</span><span class="rank-name" title="${escapeHTML(player.name)}">${escapeHTML(player.name)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.max(3, player.score / maxMvp * 100)}%"></div></div><span class="rank-score">${player.score}</span></div>`).join('');
+        $('#killLeaderboard').innerHTML = killPlayers.map((player, i) => `<div class="rank-row"><span class="rank-num">0${i + 1}</span><span class="rank-name" title="${escapeHTML(player.name)}">${escapeHTML(player.name)}</span><div class="bar-track"><div class="bar-fill blue" style="width:${Math.max(3, player.kills / maxKills * 100)}%"></div></div><span class="rank-score blue">${player.kills}</span></div>`).join('');
+      }
+      function renderPointImage() {
+        const wrap = $('#pointTablePreview');
+        if (state.pointImage?.data) {
+          wrap.innerHTML = `<div class="image-preview"><img src="${state.pointImage.data}" alt="Uploaded points table"/><div class="image-preview-footer"><span title="${escapeHTML(state.pointImage.name || 'Points table image')}">${escapeHTML(state.pointImage.name || 'Points table image')}</span><button type="button" class="remove-image" id="removePointImage">Remove image</button></div></div>`;
+          $('#removePointImage').addEventListener('click', () => { if (!isAdmin) return; state.pointImage = null; renderPointImage(); applyEditorAccess(); markChanged(); showToast('Points table image removed'); });
+        } else {
+          wrap.innerHTML = `<button class="dropzone" type="button" id="uploadTrigger"><span class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg></span><strong>Click to upload or drop an image here</strong><span>PNG, JPG or WEBP · saved with the report</span></button>`;
+          $('#uploadTrigger').addEventListener('click', () => { if (isAdmin) $('#pointFile').click(); else openAuthModal(); });
+        }
+      }
+      function syncMetaInputs() {
+        const mapping = { lobbyNo: '#lobbyNo', entryAmount: '#entryAmount', teamName: '#teamName', date: '#reportDate', lobbiesPlayed: '#metricLobbies', amountSpent: '#metricSpent', amountEarned: '#metricEarned' };
+        Object.entries(mapping).forEach(([key, selector]) => { const element = $(selector); if (element && document.activeElement !== element) element.value = state.meta[key] ?? ''; });
+        const killInput = $('#killPointValue'); if (document.activeElement !== killInput) killInput.value = state.killPointValue;
+        $('#heroDate').textContent = formatDay(state.meta.date);
+        $('#heroDateTag').textContent = displayDate(state.meta.date);
+        $('#heroTeam').textContent = state.meta.teamName?.trim() || 'Team name';
+        $('#heroLobby').textContent = state.meta.lobbyNo?.trim() ? `#${state.meta.lobbyNo.trim().replace(/^#/, '')}` : '#—';
+        $('#heroLobbyDetail').textContent = state.meta.teamName?.trim() || 'Add a lobby number to begin';
+      }
+      function updateComputed() {
+        const t = totals();
+        $('#metricMatches').textContent = String(t.activeMatches).padStart(2, '0');
+        $('#scoreMatchCount').textContent = `${t.activeMatches} / ${MATCH_COUNT}`;
+        const showNumber = number => Number.isInteger(number) ? String(number) : Number(number).toFixed(1);
+        $('#totalKillPoints').textContent = showNumber(t.killPoints);
+        $('#totalPlacementPoints').textContent = showNumber(t.placement);
+        $('#totalCombinedPoints').textContent = showNumber(t.combined);
+        $('#footerKills').textContent = String(t.kills);
+        $('#footerKillPoints').textContent = showNumber(t.killPoints);
+        $('#footerPlacementPoints').textContent = showNumber(t.placement);
+        $('#footerTeamPoints').textContent = showNumber(t.combined);
+        t.perPlayer.forEach((player, i) => {
+          $(`#player-kills-${i}`).textContent = String(player.kills);
+          $(`#player-killpts-${i}`).textContent = showNumber(player.killPoints);
+          const avatar = $(`[data-avatar="${i}"]`); if (avatar) avatar.textContent = initials(playerName(i));
+          const nameInput = $(`[data-player-name="${i}"]`); if (nameInput && document.activeElement !== nameInput) nameInput.value = playerName(i);
+        });
+        syncMetaInputs();
+        renderMvp();
+        renderLeaderboard();
+        applyEditorAccess();
+      }
+      function renderAll() { renderScoreTable(); syncMetaInputs(); updateComputed(); renderPointImage(); applyEditorAccess(); }
+
+      document.addEventListener('input', event => {
+        const target = event.target;
+        if (target.matches('[data-meta]')) { if (!isAdmin) return; setMetaField(target.dataset.meta, target.value); updateComputed(); markChanged(); return; }
+        if (target.matches('[data-player-name]')) { if (!isAdmin) return; const i = Number(target.dataset.playerName); if (state.players[i]) state.players[i].name = target.value; updateComputed(); markChanged(); return; }
+        if (target.matches('[data-stat]')) { if (!isAdmin) return; const p = Number(target.dataset.player), m = Number(target.dataset.match); state.matches[m].kills[p] = Math.max(0, Number(target.value) || 0); updateComputed(); markChanged(); return; }
+        if (target.matches('[data-placement-match]')) { if (!isAdmin) return; const m = Number(target.dataset.placementMatch); state.matches[m].placementPoints = Math.max(0, Number(target.value) || 0); updateComputed(); markChanged(); return; }
+        if (target.id === 'killPointValue') { if (!isAdmin) return; state.killPointValue = Math.max(0, Number(target.value) || 0); updateComputed(); markChanged(); }
+      });
+      document.addEventListener('change', event => {
+        const target = event.target;
+        if (target.matches('[data-meta]')) { if (!isAdmin) return; setMetaField(target.dataset.meta, target.value); updateComputed(); markChanged(); }
+        if (target.matches('[data-match-map]')) { if (!isAdmin) return; const m = Number(target.dataset.matchMap); state.matches[m].map = MAPS.includes(target.value) ? target.value : ''; updateComputed(); markChanged(); }
+        if (target.matches('[data-mvp-match]')) { if (!isAdmin) return; const m = Number(target.dataset.mvpMatch); state.mvpOverrides[m] = target.value || null; updateComputed(); markChanged(); }
+        if (target.id === 'killPointValue') { if (!isAdmin) return; state.killPointValue = Math.max(0, Number(target.value) || 0); updateComputed(); markChanged(); }
+      });
+
+      function openAuthModal() { $('#authError').textContent = ''; $('#adminPassword').value = ''; $('#authModal').hidden = false; setTimeout(() => $('#adminPassword').focus(), 30); }
+      function closeAuthModal(clearPending = true) { $('#authModal').hidden = true; if (clearPending) pendingAction = null; }
+      $('#closeAuth').addEventListener('click', closeAuthModal);
+      $('#cancelAuth').addEventListener('click', closeAuthModal);
+      $('#authModal').addEventListener('click', event => { if (event.target === $('#authModal')) closeAuthModal(); });
+      document.addEventListener('keydown', event => { if (event.key === 'Escape' && !$('#authModal').hidden) closeAuthModal(); });
+      $('#authBtn').addEventListener('click', () => {
+        if (isAdmin) { isAdmin = false; adminToken = ''; applyEditorAccess(); showToast('Editor locked'); }
+        else openAuthModal();
+      });
+      $('#authForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const button = $('#unlockBtn'); button.disabled = true; button.textContent = 'Checking…';
+        try {
+          const result = await api('/api/auth', { method: 'POST', body: JSON.stringify({ password: $('#adminPassword').value }) });
+          adminToken = result.token; isAdmin = true;
+          const action = pendingAction; pendingAction = null;
+          closeAuthModal(false); applyEditorAccess(); showToast('Admin editor unlocked');
+          if (action === 'submit') await submitCurrentReport();
+          if (action === 'new') startNewReport();
+        } catch (error) {
+          if (error.message === 'Invalid admin password') $('#authError').textContent = 'That password is not correct.';
+          else if (error instanceof TypeError || error.message === 'Failed to fetch') $('#authError').textContent = 'Cannot reach the report server. Open the live website preview (not the static file preview), then refresh.';
+          else $('#authError').textContent = error.message || 'Could not sign in. Check the server is running and refresh.';
+        }
+        finally { button.disabled = false; button.textContent = 'Unlock editor'; }
+      });
+
+      function ensureAdmin(action) {
+        if (isAdmin) return true;
+        pendingAction = action;
+        openAuthModal();
+        return false;
+      }
+      function startNewReport() {
+        if (!ensureAdmin('new')) return;
+        const hasData = state.meta.teamName || state.meta.lobbyNo || state.matches.some(match => match.map || match.kills.some(Boolean) || match.placementPoints) || currentReportId;
+        if (hasData && !window.confirm('Start a blank lobby report? Your submitted report remains saved in Section 5. Unsaved draft values will be replaced.')) return;
+        state = blankState(); currentReportId = null; isSharedReport = false;
+        const url = new URL(window.location.href); url.search = ''; url.hash = ''; history.replaceState(null, '', url.toString());
+        renderAll(); localSaveDraft(); setModeUi(); $('#saveText').textContent = 'New draft saved on this device';
+        showToast('New blank report ready'); window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      $('#newReportBtn').addEventListener('click', startNewReport);
+
+      function imageToJpeg(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader(); reader.onerror = () => reject(new Error('Could not read that image.'));
+          reader.onload = () => { const image = new Image(); image.onerror = () => reject(new Error('Could not open that image.')); image.onload = () => {
+            const scale = Math.min(1, 1500 / image.width, 1500 / image.height); const canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, Math.round(image.width * scale)); canvas.height = Math.max(1, Math.round(image.height * scale));
+            const context = canvas.getContext('2d'); context.fillStyle = '#fff'; context.fillRect(0, 0, canvas.width, canvas.height); context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL('image/jpeg', .78));
+          }; image.src = reader.result; };
+          reader.readAsDataURL(file);
+        });
+      }
+      async function acceptImage(file) {
+        if (!isAdmin) { openAuthModal(); return; }
+        if (!file || !file.type.startsWith('image/')) { showToast('Choose an image file to upload'); return; }
+        try { state.pointImage = { data: await imageToJpeg(file), name: file.name }; renderPointImage(); applyEditorAccess(); markChanged(); showToast('Points table image added'); }
+        catch (error) { showToast(error.message || 'Image upload failed'); }
+      }
+      $('#pointFile').addEventListener('change', async event => { const file = event.target.files?.[0]; if (file) await acceptImage(file); event.target.value = ''; });
+      const uploadPanel = $('.upload-panel');
+      uploadPanel.addEventListener('dragover', event => { event.preventDefault(); $('#uploadTrigger')?.classList.add('dragging'); });
+      uploadPanel.addEventListener('dragleave', event => { if (!uploadPanel.contains(event.relatedTarget)) $('#uploadTrigger')?.classList.remove('dragging'); });
+      uploadPanel.addEventListener('drop', async event => { event.preventDefault(); $('#uploadTrigger')?.classList.remove('dragging'); await acceptImage(event.dataTransfer.files?.[0]); });
+
+      function csvCell(value) { return `"${String(value ?? '').replace(/"/g, '""')}"`; }
+      $('#exportBtn').addEventListener('click', () => {
+        const t = totals(); const rows = [];
+        rows.push(['Dropzone matchday report']);
+        rows.push(['Date', state.meta.date, 'Team name', state.meta.teamName, 'Lobby no.', state.meta.lobbyNo]);
+        rows.push(['Entry amount', state.meta.entryAmount, 'Lobbies played', state.meta.lobbiesPlayed, 'Amount spent', state.meta.amountSpent, 'Amount earned', state.meta.amountEarned]);
+        rows.push(['Points per kill', state.killPointValue]);
+        const headers = ['Player']; state.matches.forEach((match, i) => headers.push(`Match ${i + 1} (${match.map || 'No map'}) kills`)); headers.push('Total kills', 'Kill points', 'MVP count'); rows.push(headers);
+        state.players.forEach((player, p) => { const r = [playerName(p)]; state.matches.forEach(match => r.push(match.kills[p])); r.push(t.perPlayer[p].kills, t.perPlayer[p].killPoints, t.mvpCounts[player.id] || 0); rows.push(r); });
+        const placementRow = ['TEAM PLACEMENT']; state.matches.forEach(match => placementRow.push(match.placementPoints)); placementRow.push('', '', t.placement, t.combined); rows.push(placementRow);
+        rows.push(['TEAM TOTALS', 'Kills', t.kills, 'Kill points', t.killPoints, 'Placement points', t.placement, 'Total points', t.combined]);
+        const csv = '\uFEFF' + rows.map(row => row.map(csvCell).join(',')).join('\r\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a');
+        link.href = url; link.download = `dropzone-report-${state.meta.date || 'matchday'}.csv`; document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 800); showToast('CSV report downloaded');
+      });
+
+      function renderSubmissionList(reports) {
+        const list = $('#submissionList');
+        if (!reports || !reports.length) { list.innerHTML = '<div class="empty-reports"><strong>No submitted lobbies yet</strong>Admin-submitted reports and their share links will show here.</div>'; return; }
+        list.innerHTML = reports.map(report => {
+          const title = report.teamName || 'Unnamed team';
+          const lobby = report.lobbyNo ? `Lobby #${report.lobbyNo}` : 'Lobby number not set';
+          const mvp = report.totalPoints ?? 0;
+          return `<div class="submitted-row"><div class="submitted-primary"><div class="submitted-mark">${escapeHTML(initials(title))}</div><div class="submitted-name"><strong>${escapeHTML(title)}</strong><span>${escapeHTML(displayDate(report.date))} · ${escapeHTML(lobby)}</span></div></div><div class="submitted-stat"><span>Matches</span><b>${Number(report.matchesPlayed) || 0}</b></div><div class="submitted-stat"><span>Total kills</span><b>${Number(report.kills) || 0}</b></div><div class="submitted-stat"><span>Team points</span><b>${Number(mvp) || 0}</b></div><a class="btn view-btn" href="${escapeHTML(getShareUrl(report.id))}">View report</a><button class="btn copy-btn" type="button" data-share-id="${escapeHTML(report.id)}">Copy link</button></div>`;
+        }).join('');
+      }
+      async function loadSubmittedReports() {
+        try { const result = await api('/api/reports'); renderSubmissionList(result.reports || []); return true; }
+        catch (error) { $('#submissionList').innerHTML = `<div class="report-error">Could not connect to the report server. Keep this tab open and check the website server is running. (${escapeHTML(error.message)})</div>`; return false; }
+      }
+      $('#submissionList').addEventListener('click', async event => {
+        const button = event.target.closest('[data-share-id]'); if (!button) return;
+        await copyShareLink(button.dataset.shareId);
+      });
+      async function copyShareLink(id) {
+        const link = getShareUrl(id);
+        try { await navigator.clipboard.writeText(link); showToast('Read-only share link copied'); }
+        catch (_) { window.prompt('Copy this read-only link for your teammates:', link); }
+      }
+      $('#shareCurrentBtn').addEventListener('click', async () => { if (currentReportId) await copyShareLink(currentReportId); });
+
+      async function submitCurrentReport() {
+        if (!ensureAdmin('submit')) return;
+        const meta = state.meta;
+        if (!meta.date || !meta.teamName.trim() || !meta.lobbyNo.trim()) {
+          showToast('Add the date, team name and lobby number before submitting.');
+          $('#submissions').scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+        const button = $('#submitReportBtn'); button.disabled = true; const oldText = $('#submitButtonText').textContent; $('#submitButtonText').textContent = currentReportId ? 'Saving…' : 'Submitting…';
+        try {
+          const payload = JSON.stringify({ data: state });
+          const result = currentReportId
+            ? await api(`/api/reports/${encodeURIComponent(currentReportId)}`, { method: 'PUT', body: payload })
+            : await api('/api/reports', { method: 'POST', body: payload });
+          currentReportId = result.report.id; isSharedReport = false;
+          const url = new URL(window.location.href); url.search = ''; url.searchParams.set('report', currentReportId); history.replaceState(null, '', url.toString());
+          $('#saveText').textContent = 'Published report saved';
+          setModeUi(); await loadSubmittedReports(); showToast(oldText === 'Save changes' ? 'Shared report updated' : 'Lobby submitted to Section 5');
+        } catch (error) { $('#saveText').textContent = 'Could not submit'; showToast(error.message || 'Could not save report'); }
+        finally { button.disabled = false; $('#submitButtonText').textContent = currentReportId ? 'Save changes' : 'Submit lobby'; }
+      }
+      $('#submitReportBtn').addEventListener('click', submitCurrentReport);
+
+      function loadLocalDraft() {
+        try { const saved = localStorage.getItem(STORAGE_KEY); return saved ? normalizeState(JSON.parse(saved)) : blankState(); }
+        catch (_) { return blankState(); }
+      }
+      async function boot() {
+        const params = new URLSearchParams(window.location.search); const reportId = params.get('report');
+        if (reportId) {
+          currentReportId = reportId; isSharedReport = true;
+          try { const result = await api(`/api/reports/${encodeURIComponent(reportId)}`); state = normalizeState(result.report.data); $('#saveText').textContent = 'Shared report loaded'; }
+          catch (error) { currentReportId = null; state = blankState(); $('#modeStrip').classList.add('error'); $('#modePill').textContent = 'REPORT NOT FOUND'; $('#modeMessage').textContent = `This shared report could not be loaded: ${error.message}`; $('#saveText').textContent = 'Report unavailable'; }
+        } else { state = loadLocalDraft(); $('#saveText').textContent = 'Draft saved on this device'; }
+        renderAll(); setModeUi(); await loadSubmittedReports();
+      }
+
+      $$('.nav-link').forEach(button => button.addEventListener('click', () => { const id = button.dataset.scroll; document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); $$('.nav-link').forEach(link => link.classList.toggle('active', link === button)); }));
+      if ('IntersectionObserver' in window) {
+        const sectionObserver = new IntersectionObserver(entries => {
+          const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]; if (!visible) return;
+          const sectionId = visible.target.id === 'mvps' ? 'points' : visible.target.id;
+          $$('.nav-link').forEach(link => link.classList.toggle('active', link.dataset.scroll === sectionId));
+        }, { rootMargin: '-20% 0px -65% 0px', threshold: [0, .15, .35] });
+        ['overview', 'tracker', 'points', 'mvps', 'leaderboards', 'submissions'].forEach(id => { const section = document.getElementById(id); if (section) sectionObserver.observe(section); });
+      }
+      boot();
+    })();
+  </script>
+</body>
+</html>
